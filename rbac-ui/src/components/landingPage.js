@@ -1,1023 +1,900 @@
-// import React, { useState } from "react";
-// import {
-//   Box,
-//   Typography,
-//   Button,
-//   TextField,
-//   Drawer,
-//   IconButton,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-//   Paper,
-//   MenuItem,
-//   Select,
-// } from "@mui/material";
-// import { ChevronLeft, Edit, Delete } from "@mui/icons-material";
-// import Header from "./Header";
-// import image from "../images/19.jpg"
-// // 17,19
-// const AdminDashboard = () => {
-//   const [users, setUsers] = useState([]);
-//   const [viewUsers, setViewUsers] = useState(false);
-//   const [openUserDrawer, setOpenUserDrawer] = useState(false);
-//   const [newUser, setNewUser] = useState({
-//     name: "",
-//     email: "",
-//     phoneNumber: "",
-//     salary: "",
-//     role: "",
-//     status: "Active",
+
+// import React, { useState, useEffect } from "react";
+// import { Button, Typography, Card, CardContent, TextField, Link as MuiLink, Modal, IconButton } from "@mui/material";
+// import { styled } from "@mui/system";
+// import { useInView } from "react-intersection-observer";
+// import { KeyboardArrowUp } from "@mui/icons-material"; // For scroll-to-top button
+// import { Box } from "@mui/material"; 
+// import Login from "./login";
+// import Signup from "./signup"
+
+
+// // Styled Components
+// const Root = styled('div')({
+//   backgroundColor: "#121212",
+//   color: "#fff",
+//   minHeight: "100vh",
+//   display: "flex",
+//   flexDirection: "column",
+//   fontFamily: "'Roboto', sans-serif",
+//   overflowX: "hidden",  // Prevent horizontal scroll
+// });
+
+// const Header = styled('header')({
+  
+//   padding: "20px 30px",
+//   display: "flex",
+//   justifyContent: "space-between",
+//   alignItems: "center",
+//   borderBottom: "1px solid #333",
+//   position: "sticky",
+//   top: 0,
+//   zIndex: 100,
+//   backgroundColor: "#121212",
+//   width: "100%", // Ensure header fits screen width
+// });
+
+// const HeaderLinks = styled('div')({
+//     marginRight: "114px",
+//   display: "flex",
+//   gap: "20px",
+// });
+
+// const HeaderLink = styled(MuiLink)({
+//   color: "#00bcd4",
+//   textDecoration: "none",
+//   fontSize: "1rem",
+//   transition: "color 0.3s ease",
+//   "&:hover": {
+//     color: "#008c9e",
+//   },
+// });
+
+// const Hero = styled('section')({
+//   position: "relative",
+//   textAlign: "center",
+//   height: "80vh", 
+//   background: "url(https://vrvsecurity.in/static/media/4.f35312466d6e3457f39e.png) center/cover no-repeat",
+//   color: "#fff",
+// });
+
+// const HeroOverlay = styled('div')({
+//   position: "absolute",
+//   top: 0,
+//   left: 0,
+//   width: "100%",
+//   height: "100%",
+//   backgroundColor: "rgba(0, 0, 0, 0.5)",
+//   display: "flex",
+//   flexDirection: "column",
+//   justifyContent: "center",
+//   alignItems: "center",
+//   padding: "20px",
+// });
+
+// const HeroText = styled(Typography)({
+//   fontSize: "3rem",
+//   fontWeight: "bold",
+//   marginBottom: "20px",
+//   textShadow: "0px 4px 10px rgba(0, 0, 0, 0.7)",
+// });
+
+// const StyledButton = styled(Button)({
+//   backgroundColor: "#00bcd4",
+//   color: "#fff",
+//   fontSize: "1.2rem",
+//   padding: "10px 30px",
+//   borderRadius: "5px",
+//   transition: "all 0.3s ease",
+//   "&:hover": {
+//     backgroundColor: "#008c9e",
+//     transform: "scale(1.05)",
+//   },
+// });
+
+// const ScrollTopButton = styled(IconButton)({
+//   position: "fixed",
+//   bottom: "20px",
+//   right: "20px",
+//   backgroundColor: "#00bcd4",
+//   color: "#fff",
+//   zIndex: 200,
+//   "&:hover": {
+//     backgroundColor: "#008c9e",
+//   },
+// });
+
+// const ServiceCards = styled('section')({
+//   padding: "50px 20px",
+//   display: "flex",
+//   justifyContent: "center",
+//   gap: "20px",
+//   flexWrap: "wrap",
+// });
+
+// const StyledCard = styled(Card)({
+//   backgroundColor: "#1a1a1a",
+//   color: "#fff",
+//   padding: "20px",
+//   borderRadius: "10px",
+//   boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+//   width: "300px",
+//   textAlign: "center",
+//   transition: "all 0.3s ease",
+//   "&:hover": {
+//     transform: "translateY(-10px)",
+//     boxShadow: "0 10px 20px rgba(0, 0, 0, 0.5)",
+//   },
+// });
+
+// const Footer = styled('footer')({
+//   backgroundColor: "#121212",
+//   padding: "20px 0",
+//   textAlign: "center",
+//   color: "#aaa",
+//   fontSize: "0.9rem",
+//   borderTop: "1px solid #333",
+// });
+
+// // About Section Styles
+// const AboutSection = styled('section')({
+//     padding: "60px 20px",
+//     backgroundColor: "#333",
+//     color: "#fff",
+//     textAlign: "center",
 //   });
-//   const [errors, setErrors] = useState({});
-//   const [editMode, setEditMode] = useState(false);
-//   const [editingUser, setEditingUser] = useState(null);
+  
+//   const AboutHeading = styled(Typography)({
+//     fontSize: "2.5rem",
+//     fontWeight: "bold",
+//     marginBottom: "30px",
+//   });
+  
+//   const AboutContent = styled('div')({
+//     display: "grid",
+//     gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+//     gap: "30px",
+//     marginBottom: "30px",
+//   });
+  
+//   const AboutItem = styled('div')({
+//     backgroundColor: "#444",
+//     padding: "20px",
+//     borderRadius: "8px",
+//     transition: "background-color 0.3s ease",
+//     "&:hover": {
+//       backgroundColor: "#555",
+//     },
+//     textAlign: "left",
+//   });
+  
+//   const AboutItemHeading = styled(Typography)({
+//     fontSize: "1.5rem",
+//     fontWeight: "bold",
+//     marginBottom: "10px",
+//   });
+  
+//   const AboutItemText = styled(Typography)({
+//     fontSize: "1rem",
+//     color: "#ccc",
+//   });
 
-//   const rolePermissions = {
-//     Admin: ["Read", "Write", "Delete"],
-//     Manager: ["Read", "Write"],
-//     Employee: ["Read"],
+// // Contact Form Section Styles
+// const ContactFormSection = styled('section')({
+//   padding: "60px 20px",
+//   backgroundColor: "#1a1a1a",
+//   color: "#fff",
+//   textAlign: "center",
+// });
+
+// const ContactFormHeading = styled(Typography)({
+//   fontSize: "2.5rem",
+//   fontWeight: "bold",
+//   marginBottom: "30px",
+// });
+
+// // FAQ Section Styles
+// const FAQSection = styled('section')({
+//   padding: "60px 20px",
+//   backgroundColor: "#333",
+//   color: "#fff",
+//   textAlign: "center",
+// });
+
+// const FAQItem = styled('div')({
+//   backgroundColor: "#444",
+//   padding: "15px",
+//   marginBottom: "15px",
+//   borderRadius: "8px",
+//   transition: "background-color 0.3s ease",
+//   "&:hover": {
+//     backgroundColor: "#555",
+//   },
+// });
+
+// const FAQAnswer = styled(Typography)({
+//   display: "none",
+//   marginTop: "10px",
+//   fontSize: "1rem",
+//   color: "#ccc",
+// });
+
+
+// function Front() {
+//   const [theme, setTheme] = useState("dark");
+//   const [openModal, setOpenModal] = useState(false);
+//   const [modalContent, setModalContent] = useState("login"); // Default to "login"
+//   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+//   const [openSnackbar, setOpenSnackbar] = useState(false);
+
+//   const [faqOpen, setFaqOpen] = useState(null);
+  
+//   const [scrollVisible, setScrollVisible] = useState(false);
+  
+//   const { ref, inView } = useInView({ triggerOnce: true });
+
+//   // Scroll-to-Top Button Visibility
+//   const handleScroll = () => {
+//     setScrollVisible(window.scrollY > 300);
 //   };
 
-//   const getPermissionsForRole = (role) => {
-//     return rolePermissions[role] || ["Read"];
+//   useEffect(() => {
+//     window.addEventListener("scroll", handleScroll);
+//     return () => {
+//       window.removeEventListener("scroll", handleScroll);
+//     };
+//   }, []);
+
+//   // Handle Theme Toggle
+//   const toggleTheme = () => {
+//     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
 //   };
 
-//   const validateUser = (user) => {
-//     const errors = {};
-
-//     if (!user.name.trim()) {
-//       errors.name = "Name is required.";
-//     }
-
-//     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
-//       errors.email = "Invalid email address.";
-//     }
-
-//     if (!/^\d{10}$/.test(user.phoneNumber)) {
-//       errors.phoneNumber = "Phone number must be 10 digits.";
-//     }
-
-//     if (!/^\d+$/.test(user.salary)) {
-//       errors.salary = "Salary must be a numeric value.";
-//     }
-
-//     if (!user.role) {
-//       errors.role = "Role is required.";
-//     }
-
-//     return errors;
+//   // Handle Modal Open/Close
+//   const handleModalOpen = (type) => {
+//     setModalContent(type); // Set modal type ("login" or "signup")
+//     setOpenModal(true);
 //   };
 
-//   const handleAddUser = async (event) => {
-//     event.preventDefault();
-//     const validationErrors = validateUser(newUser);
+//   const handleModalClose = () => setOpenModal(false);
 
-//     if (Object.keys(validationErrors).length > 0) {
-//       setErrors(validationErrors);
+//   // Handle Form Submission
+//   const handleSubmit = (e) => {
+//     e.preventDefault();
+//     if (!formData.name || !formData.email || !formData.message) {
+//       alert("All fields are required!");
 //       return;
 //     }
-//     setErrors({});
-//     const permissions = getPermissionsForRole(newUser.role);
-//     try {
-//       const response = await fetch("http://localhost:9876/api/data/create", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ newUser, permissions }),
-//       });
-//       if (response.ok) {
-//         fetchUsersFromDatabase();
-//         console.log(response);
-//       }
-//     } catch (error) {
-//       console.error("Error adding user:", error);
-//     }
-
-//     setTimeout(() => {
-//       setUsers([]);
-//     }, 0);
-
-//     resetNewUser();
+//     console.log(formData);
+//     setOpenSnackbar(true);
+//     setFormData({ name: "", email: "", message: "" });
 //   };
 
-//   const fetchUsersFromDatabase = async () => {
-//     try {
-//       console.log("fetch apii run");
-//       const response = await fetch("http://localhost:9876/api/data/list", {
-//         method: "GET",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         setUsers(data);
-//         console.log(users);
-//       } else {
-//         console.error("Failed to fetch users");
-//       }
-//     } catch (error) {
-//       console.error("Error fetching users:", error);
-//     }
+//   // Handle FAQ Item Click
+//   const toggleFAQ = (index) => {
+//     setFaqOpen(faqOpen === index ? null : index);
 //   };
 
-//   const toggleViewUsers = () => {
-//     if (!viewUsers) {
-//       console.log("toggle run");
-//       fetchUsersFromDatabase();
-//     }
-//     setViewUsers(!viewUsers);
-//   };
-
-//   const handleEditUser = async (event) => {
-//     event.preventDefault();
-
-//     const validationErrors = validateUser(editingUser);
-
-//     if (Object.keys(validationErrors).length > 0) {
-//       setErrors(validationErrors);
-//       return;
-//     }
-
-//     setErrors({});
-//     const permissions = getPermissionsForRole(editingUser.role) || [];
-
-//     try {
-//       const response = await fetch(`http://localhost:9876/api/data/update/${editingUser.id}`, {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ ...editingUser, permissions }),
-//       });
-
-//       if (response.ok) {
-//         await fetchUsersFromDatabase();
-//       } else {
-//         console.error("Failed to update user.");
-//       }
-//     } catch (error) {
-//       console.error("Error editing user:", error);
-//     }
-
-//     setUsers((prevUsers) =>
-//       prevUsers.map((user) =>
-//         user.id === editingUser.id ? { ...editingUser, permissions } : user
-//       )
-//     );
-
-//     setEditMode(false);
-//     setEditingUser(null);
-//     setOpenUserDrawer(false);
-//   };
-
-//   const handleDeleteUser = async (id) => {
-//     try {
-//       console.log({ name: "runapii", id });
-//       const response = await fetch(`http://localhost:9876/api/data/delete/${id}`, {
-//         method: "DELETE",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.ok) {
-//         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-//         console.log(`User with ID ${id} deleted successfully.`);
-//       } else {
-//         console.error(`Failed to delete user with ID ${id}.`);
-//       }
-//     } catch (error) {
-//       console.error("Error deleting user:", error);
-//     }
-//   };
-
-//   const toggleUserStatus = async (id) => {
-//     try {
-//       const response = await fetch(`http://localhost:9876/api/data/toggleStatus/${id}`, {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.ok) {
-//         const updatedUser = await response.json();
-//         setUsers((prevUsers) =>
-//           prevUsers.map((user) => (user.id === id ? updatedUser : user))
-//         );
-//         console.log("User status updated successfully:", updatedUser);
-//       } else {
-//         console.error("Failed to toggle user status.");
-//       }
-//     } catch (error) {
-//       console.error("Error toggling user status:", error);
-//     }
-//   };
-
-//   const handleRoleChange = async (id, role) => {
-//     const permissions = getPermissionsForRole(role);
-
-//     setUsers((prevUsers) =>
-//       prevUsers.map((user) =>
-//         user.id === id ? { ...user, role, permissions } : user
-//       )
-//     );
-
-//     try {
-//       const response = await fetch(`http://localhost:9876/api/data/editrole/${id}`, {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ role, permissions }),
-//       });
-
-//       if (response.ok) {
-//         const updatedUser = await response.json();
-//         setUsers((prevUsers) =>
-//           prevUsers.map((user) => (user.id === id ? updatedUser : user))
-//         );
-//         resetNewUser();
-//       }
-//     } catch (error) {
-//       console.error("Error editing user:", error);
-//     }
-//   };
-
-//   const resetNewUser = () => {
-//     setNewUser({
-//       name: "",
-//       email: "",
-//       phoneNumber: "",
-//       salary: "",
-//       role: "",
-//       status: "Active",
-//     });
-//     setErrors({});
-//     setOpenUserDrawer(false);
-//     setEditMode(false);
-//     setEditingUser(null);
+//   // Handle Scroll-to-Top
+//   const scrollToTop = () => {
+//     window.scrollTo({ top: 0, behavior: "smooth" });
 //   };
 
 //   return (
-//     <Box>
-//       <Box sx={{padding: 3,
-//      backgroundImage: `url(${image})`, // Add your image URL here
-//      backgroundSize: "cover", // Ensure the image covers the entire container
-//      backgroundPosition: "center", // Center the image
-//      backgroundAttachment: "fixed", // Fix the image position when scrolling (optional)
-//      minHeight: "calc(100vh - 49px)", // Adjust dynamically to the viewport, considering a header/footer of 64px
-//      opacity: 0.9, // Adjust transparency
-//      overflow: "hidden", // Prevent scrollbars
-//     }} // Prevent any scrollbars from appearing
-    
-//     >
-//       <Header/>
-//       <Typography
-//         variant="h4"
-//         sx={{
-//           marginBottom: 3,
-//           textAlign: "center",
-//           color: "#00FFF", // Text color to ensure visibility
-//           fontWeight: "bold",
-//           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)", // Add shadow for extra emphasis
-//         }}
-//       >
-//         Admin Dashboard
-//       </Typography>
-//       <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-//         <Button
-//           variant="contained"
-//           onClick={() => setOpenUserDrawer(true)}
-//           sx={{
-//             color: "#fff",
-//             backgroundColor: "#00796b",
-//             "&:hover": { backgroundColor: "#004d40" },
-//           }}
-//         >
-//           Add User
-//         </Button>
-//         <Button
-//           variant="contained"
-//           onClick={toggleViewUsers}
-//           color={viewUsers ? "secondary" : "primary"}
-//           sx={{
-//             color: "#fff",
-//             backgroundColor: "#00796b",
-//             "&:hover": { backgroundColor: "#004d40" },
-//           }}
-//         >
-//           {viewUsers ? "Hide User Info" : "View User Info"}
-//         </Button>
-//         </Box>
-      
-
-//       <Drawer
-//         anchor="right"
-//         open={openUserDrawer}
-//         onClose={resetNewUser}
-//         sx={{
-//           "& .MuiDrawer-paper": {
-//             width: 400,
-//             padding: 2,
-//             backgroundColor: "rgba(0.5,0.5,0.5,0.5)", // Apply transparency to the drawer
-//           },
-//         }}
-//       >
-//         <Box>
-//           <IconButton onClick={resetNewUser}>
-//             <ChevronLeft />
-//           </IconButton>
-//           <Typography variant="h6" sx={{ marginBottom: 2, color: "#000", fontWeight: "bold",marginTop:5  }}>
-//             {editMode ? "Edit User" : "Add New User"}
+//     <Root>
+//       <Header>
+//             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+//           <img 
+//             src="https://vrvsecurity.in/static/media/favicon.cc3b0694d956aaccd51d.ico" 
+//             alt="VRV Security Logo" 
+//             style={{ borderRadius: "50%", height: "40px", width: "40px" }} 
+//           />
+//           <Typography variant="h4" style={{ fontWeight: "bold" }}>
+//             VRV Security
 //           </Typography>
+//         </div>
+//         <HeaderLinks>
+//           <HeaderLink href="#about">About Us</HeaderLink>
+//           <HeaderLink href="#contact">Contact</HeaderLink>
+//           <HeaderLink href="#faq">FAQs</HeaderLink>
+//           <HeaderLink href="#" onClick={() => handleModalOpen("login")}>Login</HeaderLink>
+//           <HeaderLink href="#" onClick={() => handleModalOpen("signup")}>SignUp</HeaderLink>
+//         </HeaderLinks>
+//       </Header>
 
-//           {/* Add New User Form Fields */}
+//       <Hero>
+//         <HeroOverlay>
+//           <HeroText>Protect Your Digital World</HeroText>
+//           <StyledButton onClick={() => handleModalOpen("login")}>Get Started</StyledButton>
+//         </HeroOverlay>
+//       </Hero>
+
+//       {/* Modal for Login/Signup */}
+//       <Modal
+//         open={openModal}
+//         onClose={handleModalClose}
+//         aria-labelledby="auth-modal-title"
+//         aria-describedby="auth-modal-description"
+//       >
+//         <Box sx={{
+//           position: 'absolute',
+//           top: '50%',
+//           left: '50%',
+//           transform: 'translate(-50%, -50%)',
+//           width: 600,
+//           bgcolor: 'background.paper',
+//           borderRadius: 2,
+//           boxShadow: 24,
+//           p: 4,
+//         }}>
+//               {modalContent === "login" ? (
+//                 <Login onSwitch={() => setModalContent("signup")} />
+//               ) : (
+//                 <Signup onSwitch={() => setModalContent("login")} />
+//               )}
+//         </Box>
+//       </Modal>
+
+//       {/* About Us Section */}
+//       <AboutSection id="about">
+//         <AboutHeading>About Us</AboutHeading>
+//         <AboutContent>
+//           <AboutItem>
+//             <AboutItemHeading>Extensive Global Presence</AboutItemHeading>
+//             <AboutItemText>Operating across multiple continents to meet diverse client needs.</AboutItemText>
+//           </AboutItem>
+//           <AboutItem>
+//             <AboutItemHeading>Focused on Protection</AboutItemHeading>
+//             <AboutItemText>Committed to safeguarding businesses with reliable, scalable, and efficient solutions.</AboutItemText>
+//           </AboutItem>
+//           <AboutItem>
+//             <AboutItemHeading>Experienced Team</AboutItemHeading>
+//             <AboutItemText>Skilled professionals dedicated to maintaining high standards in digital security.</AboutItemText>
+//           </AboutItem>
+//           <AboutItem>
+//             <AboutItemHeading>Innovative Technology</AboutItemHeading>
+//             <AboutItemText>We leverage AI and cloud technologies to combat modern cyber threats.</AboutItemText>
+//           </AboutItem>
+//           <AboutItem>
+//             <AboutItemHeading>Global Leader in Cybersecurity</AboutItemHeading>
+//             <AboutItemText>VRV Security delivers advanced, AI-driven cybersecurity solutions worldwide.</AboutItemText>
+//           </AboutItem>
+//         </AboutContent>
+//       </AboutSection>
+
+//       <ServiceCards ref={ref}>
+//         {["Extensive Global Presence", "Focused on Protection", "Experienced Team", "Innovative Technology", "Global Leader in Cybersecurity"].map((title) => (
+//           <StyledCard key={title}>
+//             <CardContent>
+//               <Typography variant="h6">{title}</Typography>
+//               <Typography>{`Details about ${title.toLowerCase()}`}</Typography>
+//             </CardContent>
+//           </StyledCard>
+//         ))}
+//       </ServiceCards>
+
+//       {/* Contact Form */}
+//       <ContactFormSection id="contact">
+//         <ContactFormHeading>Contact Us</ContactFormHeading>
+//         <form onSubmit={handleSubmit}>
 //           <TextField
 //             label="Name"
+//             variant="outlined"
 //             fullWidth
 //             margin="normal"
-//             value={editMode ? editingUser?.name : newUser.name}
-//             onChange={(e) =>
-//               editMode
-//                 ? setEditingUser({ ...editingUser, name: e.target.value })
-//                 : setNewUser({ ...newUser, name: e.target.value })
-//             }
-//             error={!!errors.name}
-//             helperText={errors.name}
+//             value={formData.name}
+//             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+//             required
 //           />
 //           <TextField
 //             label="Email"
+//             variant="outlined"
 //             fullWidth
 //             margin="normal"
-//             value={editMode ? editingUser?.email : newUser.email}
-//             onChange={(e) =>
-//               editMode
-//                 ? setEditingUser({ ...editingUser, email: e.target.value })
-//                 : setNewUser({ ...newUser, email: e.target.value })
-//             }
-//             error={!!errors.email}
-//             helperText={errors.email}
+//             value={formData.email}
+//             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+//             required
 //           />
 //           <TextField
-//             label="Phone Number"
+//             label="Message"
+//             variant="outlined"
 //             fullWidth
 //             margin="normal"
-//             value={editMode ? editingUser?.phoneNumber : newUser.phoneNumber}
-//             onChange={(e) =>
-//               editMode
-//                 ? setEditingUser({ ...editingUser, phoneNumber: e.target.value })
-//                 : setNewUser({ ...newUser, phoneNumber: e.target.value })
-//             }
-//             error={!!errors.phoneNumber}
-//             helperText={errors.phoneNumber}
+//             multiline
+//             rows={4}
+//             value={formData.message}
+//             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+//             required
 //           />
-//           <TextField
-//             label="Salary"
-//             fullWidth
-//             margin="normal"
-//             value={editMode ? editingUser?.salary : newUser.salary}
-//             onChange={(e) =>
-//               editMode
-//                 ? setEditingUser({ ...editingUser, salary: e.target.value })
-//                 : setNewUser({ ...newUser, salary: e.target.value })
-//             }
-//             error={!!errors.salary}
-//             helperText={errors.salary}
-//           />
-//           <Select
-//             fullWidth
-//             margin="normal"
-//             value={editMode ? editingUser?.role : newUser.role}
-//             onChange={(e) =>
-//               editMode
-//                 ? setEditingUser({ ...editingUser, role: e.target.value })
-//                 : setNewUser({ ...newUser, role: e.target.value })
-//             }
-//             displayEmpty
-//             error={!!errors.role}
-//           >
-//             <MenuItem value="" disabled>
-//               Select Role
-//             </MenuItem>
-//             <MenuItem value="Admin">Admin</MenuItem>
-//             <MenuItem value="Manager">Manager</MenuItem>
-//             <MenuItem value="Employee">Employee</MenuItem>
-//           </Select>
-//           {errors.role && <Typography color="error">{errors.role}</Typography>}
-//           <Button
-//             variant="contained"
-//             fullWidth
-//             sx={{ marginTop: 2 }}
-//             onClick={editMode ? handleEditUser : handleAddUser}
-//           >
-//             {editMode ? "Update User" : "Add User"}
-//           </Button>
-//         </Box>
-//       </Drawer>
+//           <StyledButton type="submit">Send Message</StyledButton>
+//         </form>
+//       </ContactFormSection>
 
-//       {viewUsers && (
-//         <Box sx={{ marginTop: 7 }}>
-//           <TableContainer component={Paper} sx={{ maxHeight: "450px", overflowY: "auto", backgroundColor: "rgba(255,255,255,.3)" }}>
-//             <Table >
-//               <TableHead stickyHeader sx={{ position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-//               <TableRow sx={{ }}> {/* Dark background color */}
-//               <TableCell sx={{ color: "#ecf0f1" }}>ID</TableCell> {/* Light text color */}
-//               <TableCell sx={{ color: "#ecf0f1" }}>Name</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Email</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Phone Number</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Salary</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Role</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Permissions</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Status</TableCell>
-//               <TableCell sx={{ color: "#ecf0f1" }}>Action</TableCell>
-//             </TableRow>
-//             </TableHead>
-//               <TableBody>
-//                 {users.map((user) => (
-//                   <TableRow key={user.id}>
-//                     <TableCell sx={{ color: "#000" }}>{user.id}</TableCell>
-//                     <TableCell sx={{ color: "#000" }}>{user.name}</TableCell>
-//                     <TableCell sx={{ color: "#000" }}>{user.email}</TableCell>
-//                     <TableCell sx={{ color: "#000" }}>{user.phoneNumber}</TableCell>
-//                     <TableCell sx={{ color: "#000" }}>{user.salary}</TableCell>
-//                     <TableCell sx={{ color: "#000" }}>
-//                       <Select sx={{ color: "#000", // Text color
-//                               border: "1px solid #00796b", // Border color and thickness
-//                               borderRadius: "4px", // Optional: to make the corners rounded
-//                               "& .MuiSelect-icon": {
-//                                 color: "#00796b", // Optional: change the dropdown icon color
-//                               },
-//                             }}
-//                         value={user.role}
-//                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
-//                       >
-//                         <MenuItem  value="Admin">Admin</MenuItem>
-//                         <MenuItem  value="Manager">Manager</MenuItem>
-//                         <MenuItem  value="Employee">Employee</MenuItem>
-//                       </Select>
-//                     </TableCell>
-//                     <TableCell sx={{ color: "#000" }}>{user.permissions.join(", ")}</TableCell>
-//                     <TableCell>
-//                     <Button
-//                       variant="outlined"
-//                       sx={{
-//                         color: user.status === "Active" ? "green" : "red",
-//                         borderColor: user.status === "Active" ? "green" : "red",
-//                       }}
-//                       onClick={() => toggleUserStatus(user.id)}
-//                     >
-//                       {user.status}
-//                     </Button>
-//                     </TableCell>
-//                     <TableCell>
-//                     <IconButton
-//                       sx={{ color: "#00796b" }}
-//                       onClick={() => {
-//                         setEditMode(true);
-//                         setEditingUser(user);
-//                         setOpenUserDrawer(true);
-//                       }}
-//                     >
-//                       <Edit />
-//                     </IconButton>
-//                     <IconButton
-//                       sx={{ color: "#d32f2f" }}
-//                       onClick={() => handleDeleteUser(user.id)}
-//                     >
-//                       <Delete />
-//                     </IconButton>
-//                     </TableCell>
-//                   </TableRow>
-//                 ))}
-//               </TableBody>
-//             </Table>
-//           </TableContainer>
-//         </Box>
+//       {/* FAQ Section */}
+//       <FAQSection id="faq">
+//         <Typography variant="h5" style={{ marginBottom: "20px" }}>FAQs</Typography>
+//         {[ 
+//           { question: "What is CyberSecure?", answer: "CyberSecure is a cybersecurity company focused on providing AI-driven protection to businesses and individuals." },
+//           { question: "How does it work?", answer: "We use advanced AI and cloud technologies to safeguard against modern cyber threats." },
+//           { question: "Why choose CyberSecure?", answer: "We offer a tailored approach to cybersecurity with a focus on innovation and protection." },
+//           { question: "What services do you offer?", answer: "We provide a range of cybersecurity services including threat detection, incident response, and protection solutions." }
+//         ].map((faq, index) => (
+//           <FAQItem key={index} onClick={() => toggleFAQ(index)}>
+//             <Typography variant="h6">{faq.question}</Typography>
+//             <FAQAnswer style={{ display: faqOpen === index ? "block" : "none" }}>
+//               {faq.answer}
+//             </FAQAnswer>
+//           </FAQItem>
+//         ))}
+//       </FAQSection>
+
+//       {/* Scroll-to-Top Button */}
+//       {scrollVisible && (
+//         <ScrollTopButton onClick={scrollToTop}>
+//           <KeyboardArrowUp />
+//         </ScrollTopButton>
 //       )}
-//       </Box>
-//     </Box>
+
+//       {/* Footer */}
+//       <Footer>
+//         <Typography>© 2024 CyberSecure. All rights reserved.</Typography>
+//       </Footer>
+//     </Root>
 //   );
-// };
+// }
 
-// export default AdminDashboard;
+// export default Front;
 
 
-// Final Change
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  Drawer,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import { ChevronLeft, Edit, Delete } from "@mui/icons-material";
-import Header from "./Header";
-import image from "../images/19.jpg"
-// 17,19
-const AdminDashboard = () => {
-  const [users, setUsers] = useState([]);
-  const [viewUsers, setViewUsers] = useState(false);
-  const [openUserDrawer, setOpenUserDrawer] = useState(false);
-  const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    phoneNumber: "",
-    salary: "",
-    role: "",
-    status: "Active",
+
+
+
+
+import React, { useState, useEffect } from "react";
+import { Button, Typography, Card, CardContent, TextField, Link as MuiLink, Modal, IconButton } from "@mui/material";
+import { styled } from "@mui/system";
+import { useInView } from "react-intersection-observer";
+import { KeyboardArrowUp } from "@mui/icons-material"; // For scroll-to-top button
+import { Box } from "@mui/material"; 
+import Login from "./login";
+import Signup from "./signup"
+
+
+// Styled Components
+const Root = styled('div')({
+  backgroundColor: "#121212",
+  color: "#fff",
+  minHeight: "100vh",
+  display: "flex",
+  flexDirection: "column",
+  fontFamily: "'Roboto', sans-serif",
+  overflowX: "hidden",  // Prevent horizontal scroll
+});
+
+const Header = styled('header')({
+  
+  padding: "20px 30px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  borderBottom: "1px solid #333",
+  position: "sticky",
+  top: 0,
+  zIndex: 100,
+  backgroundColor: "#121212",
+  width: "100%", // Ensure header fits screen width
+});
+
+const HeaderLinks = styled('div')({
+    marginRight: "114px",
+  display: "flex",
+  gap: "20px",
+});
+
+const HeaderLink = styled(MuiLink)({
+  color: "#00bcd4",
+  textDecoration: "none",
+  fontSize: "1rem",
+  transition: "color 0.3s ease",
+  "&:hover": {
+    color: "#008c9e",
+  },
+});
+
+const Hero = styled('section')({
+  position: "relative",
+  textAlign: "center",
+  height: "80vh", 
+  background: "url(https://vrvsecurity.in/static/media/4.f35312466d6e3457f39e.png) center/cover no-repeat",
+  color: "#fff",
+});
+
+const HeroOverlay = styled('div')({
+  position: "absolute",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: "20px",
+});
+
+const HeroText = styled(Typography)({
+  fontSize: "3rem",
+  fontWeight: "bold",
+  marginBottom: "20px",
+  textShadow: "0px 4px 10px rgba(0, 0, 0, 0.7)",
+});
+
+const StyledButton = styled(Button)({
+  backgroundColor: "#00bcd4",
+  color: "#fff",
+  fontSize: "1.2rem",
+  padding: "10px 30px",
+  borderRadius: "5px",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    backgroundColor: "#008c9e",
+    transform: "scale(1.05)",
+  },
+});
+
+const ScrollTopButton = styled(IconButton)({
+  position: "fixed",
+  bottom: "20px",
+  right: "20px",
+  backgroundColor: "#00bcd4",
+  color: "#fff",
+  zIndex: 200,
+  "&:hover": {
+    backgroundColor: "#008c9e",
+  },
+});
+
+const ServiceCards = styled('section')({
+  padding: "50px 20px",
+  display: "flex",
+  justifyContent: "center",
+  gap: "20px",
+  flexWrap: "wrap",
+});
+
+const StyledCard = styled(Card)({
+  backgroundColor: "#1a1a1a",
+  color: "#fff",
+  padding: "20px",
+  borderRadius: "10px",
+  boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+  width: "300px",
+  textAlign: "center",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    transform: "translateY(-10px)",
+    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.5)",
+  },
+});
+
+const Footer = styled('footer')({
+  backgroundColor: "#121212",
+  padding: "20px 0",
+  textAlign: "center",
+  color: "#aaa",
+  fontSize: "0.9rem",
+  borderTop: "1px solid #333",
+});
+
+// About Section Styles
+const AboutSection = styled('section')({
+    padding: "60px 20px",
+    backgroundColor: "#333",
+    color: "#fff",
+    textAlign: "center",
   });
-  const [errors, setErrors] = useState({});
-  const [editMode, setEditMode] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
+  
+  const AboutHeading = styled(Typography)({
+    fontSize: "2.5rem",
+    fontWeight: "bold",
+    marginBottom: "30px",
+  });
+  
+  const AboutContent = styled('div')({
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+    gap: "30px",
+    marginBottom: "30px",
+  });
+  
+  const AboutItem = styled('div')({
+    backgroundColor: "#444",
+    padding: "20px",
+    borderRadius: "8px",
+    transition: "background-color 0.3s ease",
+    "&:hover": {
+      backgroundColor: "#555",
+    },
+    textAlign: "left",
+  });
+  
+  const AboutItemHeading = styled(Typography)({
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+    marginBottom: "10px",
+  });
+  
+  const AboutItemText = styled(Typography)({
+    fontSize: "1rem",
+    color: "#ccc",
+  });
 
-  const rolePermissions = {
-    Admin: ["Read", "Write", "Delete"],
-    Manager: ["Read", "Write"],
-    Employee: ["Read"],
+// Contact Form Section Styles
+const ContactFormSection = styled('section')({
+  padding: "60px 20px",
+  backgroundColor: "#1a1a1a",
+  color: "#fff",
+  textAlign: "center",
+});
+
+const ContactFormHeading = styled(Typography)({
+  fontSize: "2.5rem",
+  fontWeight: "bold",
+  marginBottom: "30px",
+});
+
+// FAQ Section Styles
+const FAQSection = styled('section')({
+  padding: "60px 20px",
+  backgroundColor: "#333",
+  color: "#fff",
+  textAlign: "center",
+});
+
+const FAQItem = styled('div')({
+  backgroundColor: "#444",
+  padding: "15px",
+  marginBottom: "15px",
+  borderRadius: "8px",
+  transition: "background-color 0.3s ease",
+  "&:hover": {
+    backgroundColor: "#555",
+  },
+});
+
+const FAQAnswer = styled(Typography)({
+  display: "none",
+  marginTop: "10px",
+  fontSize: "1rem",
+  color: "#ccc",
+});
+
+
+function Front() {
+  const [theme, setTheme] = useState("dark");
+  const [openModal, setOpenModal] = useState(false);
+  const [modalContent, setModalContent] = useState("login"); // Default to "login"
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const [faqOpen, setFaqOpen] = useState(null);
+  
+  const [scrollVisible, setScrollVisible] = useState(false);
+  
+  const { ref, inView } = useInView({ triggerOnce: true });
+
+  // Scroll-to-Top Button Visibility
+  const handleScroll = () => {
+    setScrollVisible(window.scrollY > 300);
   };
 
-  const getPermissionsForRole = (role) => {
-    return rolePermissions[role] || ["Read"];
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Handle Theme Toggle
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   };
 
-  const validateUser = (user) => {
-    const errors = {};
-
-    if (!user.name.trim()) {
-      errors.name = "Name is required.";
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
-      errors.email = "Invalid email address.";
-    }
-
-    if (!/^\d{10}$/.test(user.phoneNumber)) {
-      errors.phoneNumber = "Phone number must be 10 digits.";
-    }
-
-    if (!/^\d+$/.test(user.salary)) {
-      errors.salary = "Salary must be a numeric value.";
-    }
-
-    if (!user.role) {
-      errors.role = "Role is required.";
-    }
-
-    return errors;
+  // Handle Modal Open/Close
+  const handleModalOpen = (type) => {
+    setModalContent(type); // Set modal type ("login" or "signup")
+    setOpenModal(true);
   };
 
-  const handleAddUser = async (event) => {
-    event.preventDefault();
-    const validationErrors = validateUser(newUser);
+  const handleModalClose = () => setOpenModal(false);
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+  // Handle Form Submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) {
+      alert("All fields are required!");
       return;
     }
-    setErrors({});
-    const permissions = getPermissionsForRole(newUser.role);
-    try {
-      const response = await fetch("http://localhost:9876/api/data/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newUser, permissions }),
-      });
-      if (response.ok) {
-        fetchUsersFromDatabase();
-        console.log(response);
-      }
-    } catch (error) {
-      console.error("Error adding user:", error);
-    }
-
-    setTimeout(() => {
-      setUsers([]);
-    }, 0);
-
-    resetNewUser();
+    console.log(formData);
+    setOpenSnackbar(true);
+    setFormData({ name: "", email: "", message: "" });
   };
 
-  const fetchUsersFromDatabase = async () => {
-    try {
-      console.log("fetch apii run");
-      const response = await fetch("http://localhost:9876/api/data/list", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
-        console.log(users);
-      } else {
-        console.error("Failed to fetch users");
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
+  // Handle FAQ Item Click
+  const toggleFAQ = (index) => {
+    setFaqOpen(faqOpen === index ? null : index);
   };
 
-  const toggleViewUsers = () => {
-    if (!viewUsers) {
-      console.log("toggle run");
-      fetchUsersFromDatabase();
-    }
-    setViewUsers(!viewUsers);
-  };
-
-  const handleEditUser = async (event) => {
-    event.preventDefault();
-
-    const validationErrors = validateUser(editingUser);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setErrors({});
-    const permissions = getPermissionsForRole(editingUser.role) || [];
-
-    try {
-      const response = await fetch(`http://localhost:9876/api/data/update/${editingUser.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...editingUser, permissions }),
-      });
-
-      if (response.ok) {
-        await fetchUsersFromDatabase();
-      } else {
-        console.error("Failed to update user.");
-      }
-    } catch (error) {
-      console.error("Error editing user:", error);
-    }
-
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === editingUser.id ? { ...editingUser, permissions } : user
-      )
-    );
-
-    setEditMode(false);
-    setEditingUser(null);
-    setOpenUserDrawer(false);
-  };
-
-  const handleDeleteUser = async (id) => {
-    try {
-      console.log({ name: "runapii", id });
-      const response = await fetch(`http://localhost:9876/api/data/delete/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-        console.log(`User with ID ${id} deleted successfully.`);
-      } else {
-        console.error(`Failed to delete user with ID ${id}.`);
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
-  };
-
-  const toggleUserStatus = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:9876/api/data/toggleStatus/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const updatedUser = await response.json();
-        setUsers((prevUsers) =>
-          prevUsers.map((user) => (user.id === id ? updatedUser : user))
-        );
-        console.log("User status updated successfully:", updatedUser);
-      } else {
-        console.error("Failed to toggle user status.");
-      }
-    } catch (error) {
-      console.error("Error toggling user status:", error);
-    }
-  };
-
-  const handleRoleChange = async (id, role) => {
-    const permissions = getPermissionsForRole(role);
-
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === id ? { ...user, role, permissions } : user
-      )
-    );
-
-    try {
-      const response = await fetch(`http://localhost:9876/api/data/editrole/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role, permissions }),
-      });
-
-      if (response.ok) {
-        const updatedUser = await response.json();
-        setUsers((prevUsers) =>
-          prevUsers.map((user) => (user.id === id ? updatedUser : user))
-        );
-        resetNewUser();
-      }
-    } catch (error) {
-      console.error("Error editing user:", error);
-    }
-  };
-
-  const resetNewUser = () => {
-    setNewUser({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      salary: "",
-      role: "",
-      status: "Active",
-    });
-    setErrors({});
-    setOpenUserDrawer(false);
-    setEditMode(false);
-    setEditingUser(null);
+  // Handle Scroll-to-Top
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <Box>
-      <Box sx={{padding: 3,
-     backgroundImage: `url(${image})`, // Add your image URL here
-     backgroundSize: "cover", // Ensure the image covers the entire container
-     backgroundPosition: "center", // Center the image
-     backgroundAttachment: "fixed", // Fix the image position when scrolling (optional)
-     minHeight: "calc(100vh - 49px)", // Adjust dynamically to the viewport, considering a header/footer of 64px
-     opacity: 0.9, // Adjust transparency
-     overflow: "hidden", // Prevent scrollbars
-    }} // Prevent any scrollbars from appearing
-    
-    >
-      <Header/>
-      <Typography
-        variant="h4"
-        sx={{
-          marginBottom: 3,
-          textAlign: "center",
-          color: "#00FFF", // Text color to ensure visibility
-          fontWeight: "bold",
-          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.6)", // Add shadow for extra emphasis
-        }}
-      >
-        Admin Dashboard
-      </Typography>
-      <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-        <Button
-          variant="contained"
-          onClick={() => setOpenUserDrawer(true)}
-          sx={{
-            color: "#fff",
-            backgroundColor: "#00796b",
-            "&:hover": { backgroundColor: "#004d40" },
-          }}
-        >
-          Add User
-        </Button>
-        <Button
-          variant="contained"
-          onClick={toggleViewUsers}
-          color={viewUsers ? "secondary" : "primary"}
-          sx={{
-            color: "#fff",
-            backgroundColor: "#00796b",
-            "&:hover": { backgroundColor: "#004d40" },
-          }}
-        >
-          {viewUsers ? "Hide User Info" : "View User Info"}
-        </Button>
-        </Box>
-      
-
-      <Drawer
-        anchor="right"
-        open={openUserDrawer}
-        onClose={resetNewUser}
-        sx={{
-          "& .MuiDrawer-paper": {
-            width: 400,
-            padding: 2,
-            backgroundColor: "rgba(0.5,0.5,0.5,0.5)", // Apply transparency to the drawer
-          },
-        }}
-      >
-        <Box>
-          <IconButton onClick={resetNewUser}>
-            <ChevronLeft />
-          </IconButton>
-          <Typography variant="h6" sx={{ marginBottom: 2, color: "#000", fontWeight: "bold",marginTop:5  }}>
-            {editMode ? "Edit User" : "Add New User"}
+    <Root>
+      <Header>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <img 
+            src="https://vrvsecurity.in/static/media/favicon.cc3b0694d956aaccd51d.ico" 
+            alt="VRV Security Logo" 
+            style={{ borderRadius: "50%", height: "40px", width: "40px" }} 
+          />
+          <Typography variant="h4" style={{ fontWeight: "bold" }}>
+            VRV Security
           </Typography>
+        </div>
+        <HeaderLinks>
+          <HeaderLink href="#about">About Us</HeaderLink>
+          <HeaderLink href="#contact">Contact</HeaderLink>
+          <HeaderLink href="#faq">FAQs</HeaderLink>
+          <HeaderLink href="#" onClick={() => handleModalOpen("login")}>Login</HeaderLink>
+          <HeaderLink href="#" onClick={() => handleModalOpen("signup")}>SignUp</HeaderLink>
+        </HeaderLinks>
+      </Header>
 
-          {/* Add New User Form Fields */}
+      <Hero>
+        <HeroOverlay>
+          <HeroText>Protect Your Digital World</HeroText>
+          <StyledButton onClick={() => handleModalOpen("login")}>Get Started</StyledButton>
+        </HeroOverlay>
+      </Hero>
+
+      {/* Modal for Login/Signup */}
+      <Modal
+        open={openModal}
+        onClose={handleModalClose}
+        aria-labelledby="auth-modal-title"
+        aria-describedby="auth-modal-description"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 600,
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+        }}>
+              {modalContent === "login" ? (
+                <Login onSwitch={() => setModalContent("signup")} />
+              ) : (
+                <Signup onSwitch={() => setModalContent("login")} />
+              )}
+        </Box>
+      </Modal>
+
+      {/* About Us Section */}
+      <AboutSection id="about">
+        <AboutHeading>About Us</AboutHeading>
+        <AboutContent>
+          <AboutItem>
+            <AboutItemHeading>Extensive Global Presence</AboutItemHeading>
+            <AboutItemText>Operating across multiple continents to meet diverse client needs.</AboutItemText>
+          </AboutItem>
+          <AboutItem>
+            <AboutItemHeading>Focused on Protection</AboutItemHeading>
+            <AboutItemText>Committed to safeguarding businesses with reliable, scalable, and efficient solutions.</AboutItemText>
+          </AboutItem>
+          <AboutItem>
+            <AboutItemHeading>Experienced Team</AboutItemHeading>
+            <AboutItemText>Skilled professionals dedicated to maintaining high standards in digital security.</AboutItemText>
+          </AboutItem>
+          <AboutItem>
+            <AboutItemHeading>Innovative Technology</AboutItemHeading>
+            <AboutItemText>We leverage AI and cloud technologies to combat modern cyber threats.</AboutItemText>
+          </AboutItem>
+          <AboutItem>
+            <AboutItemHeading>Global Leader in Cybersecurity</AboutItemHeading>
+            <AboutItemText>VRV Security delivers advanced, AI-driven cybersecurity solutions worldwide.</AboutItemText>
+          </AboutItem>
+        </AboutContent>
+      </AboutSection>
+
+      <ServiceCards ref={ref}>
+        {["Extensive Global Presence", "Focused on Protection", "Experienced Team", "Innovative Technology", "Global Leader in Cybersecurity"].map((title) => (
+          <StyledCard key={title}>
+            <CardContent>
+              <Typography variant="h6">{title}</Typography>
+              <Typography>{`Details about ${title.toLowerCase()}`}</Typography>
+            </CardContent>
+          </StyledCard>
+        ))}
+      </ServiceCards>
+
+      {/* Contact Form */}
+      <ContactFormSection id="contact">
+        <ContactFormHeading>Contact Us</ContactFormHeading>
+        <form onSubmit={handleSubmit}>
           <TextField
             label="Name"
+            variant="outlined"
             fullWidth
             margin="normal"
-            value={editMode ? editingUser?.name : newUser.name}
-            onChange={(e) =>
-              editMode
-                ? setEditingUser({ ...editingUser, name: e.target.value })
-                : setNewUser({ ...newUser, name: e.target.value })
-            }
-            error={!!errors.name}
-            helperText={errors.name}
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
           <TextField
             label="Email"
+            variant="outlined"
             fullWidth
             margin="normal"
-            value={editMode ? editingUser?.email : newUser.email}
-            onChange={(e) =>
-              editMode
-                ? setEditingUser({ ...editingUser, email: e.target.value })
-                : setNewUser({ ...newUser, email: e.target.value })
-            }
-            error={!!errors.email}
-            helperText={errors.email}
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
           />
           <TextField
-            label="Phone Number"
+            label="Message"
+            variant="outlined"
             fullWidth
             margin="normal"
-            value={editMode ? editingUser?.phoneNumber : newUser.phoneNumber}
-            onChange={(e) =>
-              editMode
-                ? setEditingUser({ ...editingUser, phoneNumber: e.target.value })
-                : setNewUser({ ...newUser, phoneNumber: e.target.value })
-            }
-            error={!!errors.phoneNumber}
-            helperText={errors.phoneNumber}
+            multiline
+            rows={4}
+            value={formData.message}
+            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            required
           />
-          <TextField
-            label="Salary"
-            fullWidth
-            margin="normal"
-            value={editMode ? editingUser?.salary : newUser.salary}
-            onChange={(e) =>
-              editMode
-                ? setEditingUser({ ...editingUser, salary: e.target.value })
-                : setNewUser({ ...newUser, salary: e.target.value })
-            }
-            error={!!errors.salary}
-            helperText={errors.salary}
-          />
-          <Select
-            fullWidth
-            margin="normal"
-            value={editMode ? editingUser?.role : newUser.role}
-            onChange={(e) =>
-              editMode
-                ? setEditingUser({ ...editingUser, role: e.target.value })
-                : setNewUser({ ...newUser, role: e.target.value })
-            }
-            displayEmpty
-            error={!!errors.role}
-          >
-            <MenuItem value="" disabled>
-              Select Role
-            </MenuItem>
-            <MenuItem value="Admin">Admin</MenuItem>
-            <MenuItem value="Manager">Manager</MenuItem>
-            <MenuItem value="Employee">Employee</MenuItem>
-          </Select>
-          {errors.role && <Typography color="error">{errors.role}</Typography>}
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{ marginTop: 2 }}
-            onClick={editMode ? handleEditUser : handleAddUser}
-          >
-            {editMode ? "Update User" : "Add User"}
-          </Button>
-        </Box>
-      </Drawer>
+          <StyledButton type="submit">Send Message</StyledButton>
+        </form>
+      </ContactFormSection>
 
-      {viewUsers && (
-        <Box sx={{ marginTop: 7 }}>
-          <TableContainer component={Paper} sx={{ maxHeight: "450px", overflowY: "auto", backgroundColor: "rgba(255,255,255,.3)" }}>
-            <Table >
-              <TableHead stickyHeader sx={{ position: 'sticky', top: 0, zIndex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-              <TableRow sx={{ }}> {/* Dark background color */}
-              <TableCell sx={{ color: "#ecf0f1" }}>ID</TableCell> {/* Light text color */}
-              <TableCell sx={{ color: "#ecf0f1" }}>Name</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Email</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Phone Number</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Salary</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Role</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Permissions</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Status</TableCell>
-              <TableCell sx={{ color: "#ecf0f1" }}>Action</TableCell>
-            </TableRow>
-            </TableHead>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell sx={{ color: "#000" }}>{user.id}</TableCell>
-                    <TableCell sx={{ color: "#000" }}>{user.name}</TableCell>
-                    <TableCell sx={{ color: "#000" }}>{user.email}</TableCell>
-                    <TableCell sx={{ color: "#000" }}>{user.phoneNumber}</TableCell>
-                    <TableCell sx={{ color: "#000" }}>{user.salary}</TableCell>
-                    <TableCell sx={{ color: "#000" }}>
-                      <Select sx={{ color: "#000", // Text color
-                              border: "1px solid #00796b", // Border color and thickness
-                              borderRadius: "4px", // Optional: to make the corners rounded
-                              "& .MuiSelect-icon": {
-                                color: "#00796b", // Optional: change the dropdown icon color
-                              },
-                            }}
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      >
-                        <MenuItem  value="Admin">Admin</MenuItem>
-                        <MenuItem  value="Manager">Manager</MenuItem>
-                        <MenuItem  value="Employee">Employee</MenuItem>
-                      </Select>
-                    </TableCell>
-                    <TableCell sx={{ color: "#000" }}>{user.permissions.join(", ")}</TableCell>
-                    <TableCell>
-                    <Button
-                      variant="outlined"
-                      sx={{
-                        color: user.status === "Active" ? "green" : "red",
-                        borderColor: user.status === "Active" ? "green" : "red",
-                      }}
-                      onClick={() => toggleUserStatus(user.id)}
-                    >
-                      {user.status}
-                    </Button>
-                    </TableCell>
-                    <TableCell>
-                    <IconButton
-                      sx={{ color: "#00796b" }}
-                      onClick={() => {
-                        setEditMode(true);
-                        setEditingUser(user);
-                        setOpenUserDrawer(true);
-                      }}
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      sx={{ color: "#d32f2f" }}
-                      onClick={() => handleDeleteUser(user.id)}
-                    >
-                      <Delete />
-                    </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+      {/* FAQ Section */}
+      <FAQSection id="faq">
+        <Typography variant="h5" style={{ marginBottom: "20px" }}>FAQs</Typography>
+        {[ 
+          { question: "What is CyberSecure?", answer: "CyberSecure is a cybersecurity company focused on providing AI-driven protection to businesses and individuals." },
+          { question: "How does it work?", answer: "We use advanced AI and cloud technologies to safeguard against modern cyber threats." },
+          { question: "Why choose CyberSecure?", answer: "We offer a tailored approach to cybersecurity with a focus on innovation and protection." },
+          { question: "What services do you offer?", answer: "We provide a range of cybersecurity services including threat detection, incident response, and protection solutions." }
+        ].map((faq, index) => (
+          <FAQItem key={index} onClick={() => toggleFAQ(index)}>
+            <Typography variant="h6">{faq.question}</Typography>
+            <FAQAnswer style={{ display: faqOpen === index ? "block" : "none" }}>
+              {faq.answer}
+            </FAQAnswer>
+          </FAQItem>
+        ))}
+      </FAQSection>
+
+      {/* Scroll-to-Top Button */}
+      {scrollVisible && (
+        <ScrollTopButton onClick={scrollToTop}>
+          <KeyboardArrowUp />
+        </ScrollTopButton>
       )}
-      </Box>
-    </Box>
-  );
-};
 
-export default AdminDashboard;
+      {/* Footer */}
+      <Footer>
+        <Typography>© 2024 CyberSecure. All rights reserved.</Typography>
+      </Footer>
+    </Root>
+  );
+}
+
+export default Front;
+
+
+
