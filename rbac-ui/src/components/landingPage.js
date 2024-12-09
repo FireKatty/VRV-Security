@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Typography, Card, CardContent, TextField, Link as MuiLink, Modal, IconButton } from "@mui/material";
 import { styled } from "@mui/system";
-import { useInView } from "react-intersection-observer";
 import { KeyboardArrowUp } from "@mui/icons-material"; // For scroll-to-top button
 import { Box } from "@mui/material"; 
 import Login from "./login";
@@ -221,17 +220,16 @@ const FAQAnswer = styled(Typography)({
 
 
 function Front() {
-  const [theme, setTheme] = useState("dark");
+  
   const [openModal, setOpenModal] = useState(false);
   const [modalContent, setModalContent] = useState("login"); // Default to "login"
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+  
 
   const [faqOpen, setFaqOpen] = useState(null);
   
   const [scrollVisible, setScrollVisible] = useState(false);
   
-  const { ref, inView } = useInView({ triggerOnce: true });
 
   // Scroll-to-Top Button Visibility
   const handleScroll = () => {
@@ -245,10 +243,7 @@ function Front() {
     };
   }, []);
 
-  // Handle Theme Toggle
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
-  };
+  
 
   // Handle Modal Open/Close
   const handleModalOpen = (type) => {
@@ -266,7 +261,6 @@ function Front() {
       return;
     }
     console.log(formData);
-    setOpenSnackbar(true);
     setFormData({ name: "", email: "", message: "" });
   };
 
@@ -362,7 +356,7 @@ function Front() {
         </AboutContent>
       </AboutSection>
 
-      <ServiceCards ref={ref}>
+      <ServiceCards >
         {["Extensive Global Presence", "Focused on Protection", "Experienced Team", "Innovative Technology", "Global Leader in Cybersecurity"].map((title) => (
           <StyledCard key={title}>
             <CardContent>

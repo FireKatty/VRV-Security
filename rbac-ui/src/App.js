@@ -5,7 +5,6 @@ import Login from "./components/login";
 import Signup from "./components/signup";
 import LandingPage from "./components/landingPage";
 import AdminPage from "./components/adminPage"
-import User from "./components/User";
 
 
 function App() {
@@ -16,7 +15,6 @@ function App() {
           {/* Protected routes with Header */}
           <Route element={<Private />}>
               <Route path="/admin" element={<AdminPage />} />
-              <Route path="/user" element={<User />} />
           </Route>
           {/* Unprotected Routes */}
           <Route path="/" element={<LandingPage />} />
