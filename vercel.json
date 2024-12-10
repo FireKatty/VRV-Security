@@ -1,28 +1,11 @@
 {
-    "version": 2,
-    "name": "vrv-security",
-    "builds": [
-      {
-        "src": "backend-server.js",
-        "use": "@vercel/node"
-      },
-      {
-        "src": "rbac-ui/package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "rbac-ui/build"
-        }
-      }
-    ],
-    "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "backend-server.js"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "rbac-ui/$1"
-      }
-    ]
+  "buildCommand": "cd rbac-ui && npm install && npm run build",
+  "outputDirectory": "rbac-ui/build",
+  "framework": "create-react-app",
+  "rewrites": [
+    {
+      "source": "/backend/(.*)",
+      "destination": "/backend-server.js"
+    }
+  ]
 }
-  
