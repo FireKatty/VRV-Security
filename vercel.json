@@ -4,7 +4,7 @@
   "framework": "create-react-app",
   "rewrites": [
     {
-      "source": "/backend/(.*)",
+      "source": "/api/(.*)",
       "destination": "/api/server.js"
     }
   ]

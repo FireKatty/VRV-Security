@@ -73,7 +73,8 @@ const Signup = ( {onSwitch}) => {
       } else {
         // Handle server error
         const errorData = await response.json();
-        setError(errorData.message || 'An error occurred during signup.');
+        // console.log(errorData.error)
+        setError(errorData.error || 'An error occurred during signup.');
       }
     } catch (error) {
       // Handle fetch error
