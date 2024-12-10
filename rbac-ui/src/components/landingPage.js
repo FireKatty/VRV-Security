@@ -408,9 +408,9 @@ function Front() {
       <FAQSection id="faq">
         <Typography variant="h5" style={{ marginBottom: "20px" }}>FAQs</Typography>
         {[ 
-          { question: "What is CyberSecure?", answer: "CyberSecure is a cybersecurity company focused on providing AI-driven protection to businesses and individuals." },
+          { question: "What is VRV Security?", answer: "VRV Security is a cybersecurity company focused on providing AI-driven protection to businesses and individuals." },
           { question: "How does it work?", answer: "We use advanced AI and cloud technologies to safeguard against modern cyber threats." },
-          { question: "Why choose CyberSecure?", answer: "We offer a tailored approach to cybersecurity with a focus on innovation and protection." },
+          { question: "Why choose VRV Security?", answer: "We offer a tailored approach to cybersecurity with a focus on innovation and protection." },
           { question: "What services do you offer?", answer: "We provide a range of cybersecurity services including threat detection, incident response, and protection solutions." }
         ].map((faq, index) => (
           <FAQItem key={index} onClick={() => toggleFAQ(index)}>
@@ -431,7 +431,7 @@ function Front() {
 
       {/* Footer */}
       <Footer>
-        <Typography>© 2024 CyberSecure. All rights reserved.</Typography>
+        <Typography>© 2024 VRV Security. All rights reserved.</Typography>
       </Footer>
     </Root>
   );
