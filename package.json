@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "frontend": "cd rbac-ui && npm start",
-    "backend": "cd backend && nodemon server.js",
+    "backend": "cd api && nodemon server.js",
     "start": "concurrently -n \"frontend,backend\" -c \"bgBlue,bgYellow\" \"npm run frontend\" \"npm run backend\" "
   },
   "keywords": [],
