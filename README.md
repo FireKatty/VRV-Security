@@ -46,8 +46,6 @@ Detailed explanations of the features, setup instructions, and how to use the sy
 
 **Clone the Repository:**
 ->git clone https://github.com/FireKatty/VRV-Security
-->cd rbac-ui
-->cd backend
 
 **Install Dependencies: Ensure you have Node.js installed, then run:**
 ->npm install
@@ -57,7 +55,6 @@ Detailed explanations of the features, setup instructions, and how to use the sy
 ->DB_URI=mongodb://localhost:27017/rbacdb
 
 **Run the Application: To start the server, run:**
-->nodemon server
 ->npm start
 
 
