@@ -51,8 +51,9 @@ Detailed explanations of the features, setup instructions, and how to use the sy
 ->npm install
 
 **Environment Variables: Create a .env file at the root of the project and add the following:**
+->port = Your_port_number
 ->JWT_SECRET=your_jwt_secret
-->DB_URI=mongodb://localhost:27017/rbacdb
+->MONGO_URI=mongodb://localhost:27017/VRV_Security
 
 **Run the Application: To start the server, run:**
 ->npm start
