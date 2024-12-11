@@ -34,7 +34,7 @@ const Login = ({onSwitch}) => {
     console.log(loginData)
     try {
       // Fetch API to authenticate the user
-      const response = await fetch("http://localhost:9876/api/auth/login", {
+      const response = await fetch("https://vrv-security-k35neueyb-abhishek-katiyars-projects-97d0705a.vercel.app/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

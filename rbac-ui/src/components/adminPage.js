@@ -237,7 +237,7 @@ const AdminDashboard = () => {
     );
 
     try {
-      const response = await fetch(`http://localhost:9876/api/data/editrole/${id}`, {
+      const response = await fetch(`https://vrv-security-k35neueyb-abhishek-katiyars-projects-97d0705a.vercel.app/api/data/editrole/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

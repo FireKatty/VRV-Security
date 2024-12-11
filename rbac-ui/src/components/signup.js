@@ -55,7 +55,7 @@ const Signup = ( {onSwitch}) => {
 
     try {
       // Make the API request using fetch
-      const response = await fetch('http://localhost:9876/api/auth/signup', {
+      const response = await fetch('https://vrv-security-k35neueyb-abhishek-katiyars-projects-97d0705a.vercel.app/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
